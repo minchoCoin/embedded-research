@@ -34,6 +34,7 @@
 #define I2C_MASTER_RX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_TIMEOUT_MS       1000
 
+#define NUM_SAMPLE 100
 
 typedef enum {
 	ACCE_FS_2G = 0,  /*!< Accelerometer full scale range is +/- 2g */
@@ -577,4 +578,29 @@ icm20948_sleep(icm20948_handle_t sensor)
 	tmp |= 0x40;
 	ret = icm20948_write(sensor, ICM20948_PWR_MGMT_1, &tmp, 1);
 	return ret;
+}
+
+esp_err_t calibrate_gyro(icm20948_handle_t sensor, icm20948_gyro_value_t* bias)
+{
+	esp_err_t ret=ESP_OK;
+    float x_sum=0.0;
+    float y_sum=0.0;
+    float z_sum=0.0;
+
+	icm20948_gyro_value_t tmp={0.0,0.0,0.0};
+
+	for(int i=0;i<NUM_SAMPLE;i++){
+		ret = icm20948_get_gyro(sensor,&tmp);
+		if(ret!=ESP_OK) return ret;
+
+		x_sum += tmp.gyro_x;
+		y_sum +=tmp.gyro_y;
+		z_sum +=tmp.gyro_z;
+	}
+	bias->gyro_x = x_sum / NUM_SAMPLE;
+	bias->gyro_y=y_sum/NUM_SAMPLE;
+	bias->gyro_z=z_sum/NUM_SAMPLE;
+
+	return ret;
+    
 }

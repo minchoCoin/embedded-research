@@ -30,6 +30,7 @@
 static const char *TAG = "icm20948";
 
 
+
 void app_main(void)
 {
     uint8_t data[2];
@@ -44,8 +45,11 @@ void app_main(void)
 
     ESP_LOGI(TAG,"WHO_AM_I = %X",data[0]);
 
-    icm20948_acce_value_t acce_value;
-    icm20948_gyro_value_t gyro_value;
+    icm20948_acce_value_t acce_value = {0.0,0.0,0.0};
+    icm20948_gyro_value_t gyro_value = {0.0,0.0,0.0};
+
+    icm20948_gyro_value_t bias;
+
     ESP_ERROR_CHECK(icm20948_wake_up(*sensor));
     ESP_ERROR_CHECK(icm20948_set_acce_dlpf(*sensor,ICM20948_DLPF_OFF));
     ESP_ERROR_CHECK(icm20948_set_acce_fs(*sensor,ACCE_FS_2G));
@@ -106,7 +110,10 @@ void app_main(void)
 
     /*bluetooth setting end*/
     
+    ESP_LOGI(TAG,"GYRO(X,Y,Z): %.2f,%.2f,%.2f",gyro_value.gyro_x,gyro_value.gyro_y,gyro_value.gyro_z);
+    ESP_LOGI(TAG,"ACCE(X,Y,Z): %.2f,%.2f,%.2f",acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
     
+    calibrate_gyro(*sensor,&bias);
     while(1){
         ESP_ERROR_CHECK(icm20948_get_gyro(*sensor, &gyro_value));
         ESP_ERROR_CHECK(icm20948_get_acce(*sensor, &acce_value));
@@ -114,11 +121,11 @@ void app_main(void)
         uint8_t gyro_info[100];
         uint8_t acce_info[100];
 
-        sprintf((char*)gyro_info,"GYRO(X,Y,Z): %.2f,%.2f,%.2f\n",gyro_value.gyro_x,gyro_value.gyro_y,gyro_value.gyro_z);
+        sprintf((char*)gyro_info,"GYRO(X,Y,Z): %.2f,%.2f,%.2f\n",gyro_value.gyro_x - bias.gyro_x,gyro_value.gyro_y - bias.gyro_y,gyro_value.gyro_z - bias.gyro_z);
         sprintf((char*)acce_info,"ACCE(X,Y,Z): %.2f,%.2f,%.2f\n",acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
 
-        ESP_LOGI(TAG,"GYRO(X,Y,Z): %.2f,%.2f,%.2f",gyro_value.gyro_x,gyro_value.gyro_y,gyro_value.gyro_z);
-        ESP_LOGI(TAG,"ACCE(X,Y,Z): %.2f,%.2f,%.2f",acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
+        //ESP_LOGI(TAG,"GYRO(X,Y,Z): %.2f,%.2f,%.2f",gyro_value.gyro_x,gyro_value.gyro_y,gyro_value.gyro_z);
+        //ESP_LOGI(TAG,"ACCE(X,Y,Z): %.2f,%.2f,%.2f",acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
 
         ESP_ERROR_CHECK(send_notification(gyro_info,strlen((char*)gyro_info)));
         ESP_ERROR_CHECK(send_notification(acce_info,strlen((char*)acce_info)));
