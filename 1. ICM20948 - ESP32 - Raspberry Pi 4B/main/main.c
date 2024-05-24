@@ -30,13 +30,10 @@
 static const char *TAG = "icm20948";
 
 
-
-
-
 void app_main(void)
 {
     uint8_t data[2];
-    
+    /*I2C and icm20948 setting start*/
     ESP_ERROR_CHECK(i2c_master_init());
     ESP_LOGI(TAG, "I2C initialized successfully");
 
@@ -55,7 +52,9 @@ void app_main(void)
     ESP_ERROR_CHECK(icm20948_set_gyro_dlpf(*sensor,ICM20948_DLPF_OFF));
     ESP_ERROR_CHECK(icm20948_set_gyro_fs(*sensor,GYRO_FS_250DPS));
 
+    /*I2C and icm20948 setting end*/
 
+    /*bluetooth setting start*/
    esp_err_t ret;
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
 
@@ -105,7 +104,7 @@ void app_main(void)
         ESP_LOGE(GATTS_TABLE_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
 
-    
+    /*bluetooth setting end*/
     
     
     while(1){
@@ -127,7 +126,7 @@ void app_main(void)
         vTaskDelay(configTICK_RATE_HZ);
     }
     
-   
+    /* delete icm20948*/
     icm20948_delete(sensor);
     ESP_ERROR_CHECK(i2c_driver_delete(I2C_MASTER_NUM));
     ESP_LOGI(TAG, "I2C unitialized successfully");
