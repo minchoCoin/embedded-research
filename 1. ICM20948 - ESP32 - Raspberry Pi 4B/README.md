@@ -7,6 +7,7 @@
 - ESP-IDF
 
 # demo video
+(you can watch the video via clicking pictures below)
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/WzRQxCV40B0/0.jpg)](https://youtu.be/WzRQxCV40B0)
 
 # references
