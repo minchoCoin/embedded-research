@@ -14,3 +14,4 @@
 # references
 - [https://github.com/espressif/esp-idf/tree/master/examples/bluetooth/bluedroid/ble/ble_spp_server](https://github.com/espressif/esp-idf/tree/master/examples/bluetooth/bluedroid/ble/ble_spp_server)
 - [https://github.com/listout/icm20948_driver](https://github.com/listout/icm20948_driver)
+- [https://m.blog.naver.com/chandong83/222339068616](https://m.blog.naver.com/chandong83/222339068616)
