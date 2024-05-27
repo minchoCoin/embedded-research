@@ -113,7 +113,7 @@ void app_main(void)
     ESP_LOGI(TAG,"GYRO(X,Y,Z): %.2f,%.2f,%.2f",gyro_value.gyro_x,gyro_value.gyro_y,gyro_value.gyro_z);
     ESP_LOGI(TAG,"ACCE(X,Y,Z): %.2f,%.2f,%.2f",acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
     
-    calibrate_gyro(*sensor,&bias);
+    ESP_ERROR_CHECK(calibrate_gyro(*sensor,&bias));
     while(1){
         ESP_ERROR_CHECK(icm20948_get_gyro(*sensor, &gyro_value));
         ESP_ERROR_CHECK(icm20948_get_acce(*sensor, &acce_value));
