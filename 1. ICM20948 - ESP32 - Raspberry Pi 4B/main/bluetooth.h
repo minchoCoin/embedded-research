@@ -14,6 +14,8 @@
 #define SPP_CMD_MAX_LEN            (20)
 #define SPP_STATUS_MAX_LEN         (20)
 #define SPP_DATA_BUFF_MAX_LEN      (2*1024)
+
+
 ///Attributes State Machine
 enum{
     SPP_IDX_SVC,
@@ -671,7 +673,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 static esp_err_t send_notification(uint8_t *data, uint16_t len) {
     
     esp_err_t ret=ESP_OK;
-    if(spp_conn_id!=0xFFFF)
+    if(is_connected)
         ret = esp_ble_gatts_send_indicate(spp_gatts_if, spp_conn_id, spp_handle_table[SPP_IDX_SPP_DATA_NTY_VAL],len, data, false);
     return ret;
     
@@ -690,6 +692,8 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
             return;
         }
     }
+
+    
 
     do {
         int idx;
