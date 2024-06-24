@@ -593,8 +593,10 @@ esp_err_t calibrate_gyro(icm20948_handle_t sensor, icm20948_gyro_value_t* bias)
 	icm20948_gyro_value_t tmp={0.0,0.0,0.0};
 
 	for(int i=0;i<NUM_SAMPLE;i++){
-		ESP_ERROR_CHECK(icm20948_read(sensor,ICM20948_INT_STATUS_1,&int_status,sizeof(int_status)));
-		while(!(int_status&0x01));
+		
+		while(!(int_status&0x01)){
+			ESP_ERROR_CHECK(icm20948_read(sensor,ICM20948_INT_STATUS_1,&int_status,sizeof(int_status)));
+		}
 		ret = icm20948_get_gyro(sensor,&tmp);
 		if(ret!=ESP_OK) return ret;
 
@@ -623,8 +625,9 @@ esp_err_t calibrate_acce(icm20948_handle_t sensor, icm20948_acce_value_t* bias)
 	icm20948_acce_value_t tmp={0.0,0.0,0.0};
 
 	for(int i=0;i<NUM_SAMPLE;i++){
-		ESP_ERROR_CHECK(icm20948_read(sensor,ICM20948_INT_STATUS_1,&int_status,sizeof(int_status)));
-		while(!(int_status&0x01));
+		while(!(int_status&0x01)){
+			ESP_ERROR_CHECK(icm20948_read(sensor,ICM20948_INT_STATUS_1,&int_status,sizeof(int_status)));
+		}
 		ret = icm20948_get_acce(sensor,&tmp);
 		if(ret!=ESP_OK) return ret;
 
