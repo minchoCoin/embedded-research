@@ -9,5 +9,8 @@ refer [esp32 tflite github readme](https://github.com/espressif/esp-tflite-micro
 # demo videos
 [![Video Label](http://img.youtube.com/vi/NZerKOXpo1s/0.jpg)](https://youtube.com/shorts/NZerKOXpo1s)
 
+# others
+model_.png is generated with [Netron](https://github.com/lutzroeder/netron)
+
 # references
 - [esp32 tflite example](https://github.com/espressif/esp-tflite-micro/blob/master/examples/micro_speech/main/main_functions.cc)
