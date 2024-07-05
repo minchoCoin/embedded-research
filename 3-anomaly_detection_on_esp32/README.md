@@ -6,5 +6,8 @@ get training data using [getTrainingData.py(raspberrypi)](https://github.com/min
 # install tflite on esp32
 refer [esp32 tflite github readme](https://github.com/espressif/esp-tflite-micro/blob/master/README.md)
 
+# demo videos
+[![Video Label](http://img.youtube.com/vi/NZerKOXpo1s/0.jpg)](https://youtube.com/shorts/NZerKOXpo1s)
+
 # references
 - [esp32 tflite example](https://github.com/espressif/esp-tflite-micro/blob/master/examples/micro_speech/main/main_functions.cc)
