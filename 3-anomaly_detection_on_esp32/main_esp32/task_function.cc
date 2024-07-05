@@ -18,6 +18,9 @@
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+
+#define ANOMALY_THRESHOLD 60.0
+
 extern QueueHandle_t queue_data;
 
 static const char *TAG = "icm20948";
@@ -75,7 +78,7 @@ void detection_task(void *pvParameter){
                 }
                 for(int i=0;i<128;++i){
                     error[i] = fabs(input[i] - output[i]);
-                    if(error[i]>90.0){
+                    if(error[i]>ANOMALY_THRESHOLD){
                         //ESP_LOGI(TAG,"diff: %f",error[i]);
                         anomaly=true;
                         anomaly_index=i;
