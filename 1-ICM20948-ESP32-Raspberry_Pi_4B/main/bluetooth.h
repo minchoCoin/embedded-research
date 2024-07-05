@@ -673,7 +673,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 static esp_err_t send_notification(uint8_t *data, uint16_t len) {
     
     esp_err_t ret=ESP_OK;
-    if(is_connected)
+    if(enable_data_ntf)
         ret = esp_ble_gatts_send_indicate(spp_gatts_if, spp_conn_id, spp_handle_table[SPP_IDX_SPP_DATA_NTY_VAL],len, data, false);
     return ret;
     
