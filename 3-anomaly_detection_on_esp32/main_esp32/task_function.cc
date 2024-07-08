@@ -1,4 +1,4 @@
-
+#define _USE_MATH_DEFINES
 #include <stdio.h>
 #include <algorithm>
 #include "task_function.h"
@@ -19,7 +19,7 @@
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 
-#define ANOMALY_THRESHOLD 60.0
+#define ANOMALY_THRESHOLD 5.5
 
 extern QueueHandle_t queue_data;
 
@@ -136,6 +136,10 @@ void measure_task(void *pvParameter){
             acce_value.acce_x -=bias_acce.acce_x;
             acce_value.acce_y -=bias_acce.acce_y;
             acce_value.acce_z -=bias_acce.acce_z;
+
+            gyro_value.gyro_x *= (M_PI/180.0);
+            gyro_value.gyro_y *= (M_PI/180.0);
+            gyro_value.gyro_z *= (M_PI/180.0);
 
             pitch = get_pitch(acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
             roll = get_roll(acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);

@@ -32,6 +32,9 @@ def notification_handler(sender, data):
     tmp = data.decode("utf-8").split(',')[1:]
     for i in range(len(tmp)):
         tmp[i] = float(tmp[i])
+    tmp[0] *=  (math.pi/180.0)
+    tmp[1] *=  (math.pi/180.0)
+    tmp[2] *=  (math.pi/180.0)
     tmp.append(get_pitch(tmp[3],tmp[4],tmp[5]))
     tmp.append(get_roll(tmp[3],tmp[4],tmp[5]))
     received_data.append(tmp)
@@ -45,7 +48,7 @@ def notification_handler(sender, data):
     pred=[pred]
     reconstructed_error = calculate_error(sequences,pred)
     #print(reconstructed_error)    
-    anomalies = reconstructed_error> 10
+    anomalies = reconstructed_error> 5
     for i in range(len(anomalies)):
         if len(np.where(anomalies[i]==True)[0]):
             print('anomalies detected: ',np.round(received_data[i],3))
