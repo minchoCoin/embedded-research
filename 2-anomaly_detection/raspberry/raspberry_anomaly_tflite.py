@@ -2,16 +2,12 @@ import asyncio
 import pandas as pd
 import math
 import numpy as np
-from keras.utils import pad_sequences
-from keras.layers import Masking
-from tensorflow.python.client import device_lib
-from keras.models import Model
-from keras.layers import Input, LSTM, RepeatVector, TimeDistributed, Dense
-from keras.callbacks import EarlyStopping
-import keras
+
 import tensorflow as tf
 from pickle import load
 from bleak import BleakClient
+
+np.set_printoptions(suppress=True)
 
 # 블루투스 기기의 주소와 알림을 받을 특성의 UUID를 정의합니다.
 DEVICE_ADDRESS = "40:F5:20:70:62:66"
@@ -45,18 +41,19 @@ def notification_handler(sender, data):
 
     scaled_data = scaler.transform(received_data)
     sequences = [scaled_data]
-    sequences = np.array(sequences)
+    sequences = np.array(sequences,dtype=np.float32)
 
     interpreter.set_tensor(input_details[0]['index'],sequences)
     interpreter.invoke()
-    output_data = interpreter.get_tensor(output_details[0]['index'])
-
-    reconstructed_error = calculate_error(sequences,output_data)
-        
-    anomalies = reconstructed_error> 1
+    output_data = interpreter.get_tensor(output_details[0]['index'])[0]
+    
+    pred = scaler.inverse_transform(output_data)
+    output_data=[pred]
+    reconstructed_error = calculate_error(sequences,output_data) 
+    anomalies = reconstructed_error> 50
     for i in range(len(anomalies)):
-        if len(np.where(anomalies[i]==1))>0:
-            print('anomalies detected: ',received_data[i])
+        if len(np.where(anomalies[i]==True)[0])>0:
+            print('anomalies detected: ',np.round(received_data[i],3))
     received_data = []
     
     #print(f"Received notification: {data.decode('utf-8')}")

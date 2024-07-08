@@ -2,14 +2,8 @@ import asyncio
 import pandas as pd
 import math
 import numpy as np
-from keras.utils import pad_sequences
-from keras.layers import Masking
-from tensorflow.python.client import device_lib
-from keras.models import Model
-from keras.layers import Input, LSTM, RepeatVector, TimeDistributed, Dense
-from keras.callbacks import EarlyStopping
-import keras
 import tensorflow as tf
+import keras
 from pickle import load
 from bleak import BleakClient
 
@@ -17,9 +11,11 @@ from bleak import BleakClient
 DEVICE_ADDRESS = "40:F5:20:70:62:66"
 CHARACTERISTIC_UUID = "0000abf2-0000-1000-8000-00805f9b34fb"
 
+np.set_printoptions(suppress=True)
+
 # 알림을 받을 문자열 배열을 정의합니다.
 received_data = []
-model = keras.models.load_model('./model.h5',verbose=0)
+model = keras.models.load_model('./model.h5')
 with open('minmax_scaler.pkl', 'rb') as f:
     scaler = load(f)
 def calculate_error(original,reconstructed):
@@ -44,14 +40,15 @@ def notification_handler(sender, data):
     sequences = [scaled_data]
     sequences = np.array(sequences)
 
-    pred = model.predict(sequences)
-
+    pred = model.predict(sequences,verbose=0)[0]
+    pred = scaler.inverse_transform(pred)
+    pred=[pred]
     reconstructed_error = calculate_error(sequences,pred)
-        
-    anomalies = reconstructed_error> 0.2
+    #print(reconstructed_error)    
+    anomalies = reconstructed_error> 10
     for i in range(len(anomalies)):
-        if len(np.where(anomalies[i]==1))>0:
-            print('anomalies detected: ',received_data[i])
+        if len(np.where(anomalies[i]==True)[0]):
+            print('anomalies detected: ',np.round(received_data[i],3))
     received_data = []
     
     #print(f"Received notification: {data.decode('utf-8')}")
