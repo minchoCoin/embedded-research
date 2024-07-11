@@ -91,9 +91,9 @@ extern "C" void app_main(void)
     ESP_ERROR_CHECK(icm20948_set_bank(*mysensor,0));
     
     ESP_LOGI(TAG,"creating task start...");
-    xTaskCreate(&measure_task, "measure_task",2048,NULL,6,NULL);
+    xTaskCreate(&measure_task, "measure_task",4096,NULL,6,NULL);
     ESP_LOGI(TAG,"measure task has been created");
-    xTaskCreate(&detection_task, "detect_task", 4096, NULL, 4, NULL);
+    xTaskCreate(&detection_task, "detect_task", 8192, NULL, 4, NULL);
     ESP_LOGI("tflite","detection task has been created");
     //xTaskCreate(&bluetooth_task, "blue_task", 2048, NULL, 3, NULL); //due to the memory, delete bluetooth task and concatenate with detection task.
     
