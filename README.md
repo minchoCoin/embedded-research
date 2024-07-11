@@ -21,3 +21,10 @@ The results of the undergraduate research student
 - measure task: measuring sensor values and sending the values to 'detection task'
 - detection task: detecting anomalies from receving values from 'measure task'
     - measure task send values using queue
+
+## 4-anomaly_detection_on_esp32_ver2
+- anomaly detection on esp32 using Depthwise-CNN autoencoder model(using tensorflow-lite)
+- using [esp32-tflite-micro](https://github.com/espressif/esp-tflite-micro)
+- measure task: measuring sensor values and sending the values to 'detection task'
+- detection task: detecting anomalies from receving values from 'measure task'
+    - measure task send values using queue
