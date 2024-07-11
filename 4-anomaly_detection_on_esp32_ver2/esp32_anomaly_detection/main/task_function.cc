@@ -101,7 +101,7 @@ void detection_task(void *pvParameter){
                     anomaly_index_remain = anomaly_index%8;
                     if(message!=NULL){
                         
-                        sprintf(message,"anomaly detected: %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d(%.5f): %.5f expected\n",
+                        sprintf(message,"anomaly detected; %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d : %.5f: expected:%.5f\n",
                             input[anomaly_index_share*8+0],input[anomaly_index_share*8+1],input[anomaly_index_share*8+2],input[anomaly_index_share*8+3],input[anomaly_index_share*8+4],input[anomaly_index_share*8+5],input[anomaly_index_share*8+6],input[anomaly_index_share*8+7],
                             anomaly_index_remain ,input[anomaly_index],output[anomaly_index]);
                         ESP_LOGI(TAGTF,"%s",message);
