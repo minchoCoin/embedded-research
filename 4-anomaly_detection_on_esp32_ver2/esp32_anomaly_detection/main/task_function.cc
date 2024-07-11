@@ -19,7 +19,7 @@
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 
-#define ANOMALY_THRESHOLD 5.5
+#define ANOMALY_THRESHOLD 1.0
 
 extern QueueHandle_t queue_data;
 
@@ -36,6 +36,8 @@ void detection_task(void *pvParameter){
     float* data;
     char* message;
     int anomaly_index=0;
+    int anomaly_index_share=0;
+    int anomaly_index_remain=0;
     //ESP_LOGI("detection task","detection task created");
 
     const float input_scale = model_input->params.scale;
@@ -43,24 +45,31 @@ void detection_task(void *pvParameter){
 
     const float output_scale = model_output->params.scale;
     const float output_zero_point = model_output->params.zero_point;
-    float input[128];
-    float output[128];
+    float input[128]; //original_value
+    float input_scaled[128];
+    float output[128]; //scaled ->original
     float error[128];
     //SEQ_LEN=16 -->sequences_shape = (,128)
     int seq=0;
+    int seq_original=0;
     while(1){
         if(xQueueReceive(queue_data,&data,portMAX_DELAY)==pdPASS){
             bool anomaly=false;
-            minmax_scale(data);
-            //todo:quantize input data
+
             for(int i=0;i<8;++i){
-                //model_input_buffer[i] = (int8_t)(data[i] / input_scale + input_zero_point);
-                model_input_buffer[seq] = data[i];
-                input[seq++] = data[i];
+                input[seq_original++] = data[i];//input array store original gyro/acce value
+            }
+
+            minmax_scale(data);
+            for(int i=0;i<8;++i){
+                //model_input_buffer[seq++] = (int8_t)(data[i] / input_scale + input_zero_point);
+                model_input_buffer[seq] = data[i]; //model input buffer store scaled gyro/acce value
+                input_scaled[seq] = data[i];
+                seq++;
             }
            if(seq==128){
             seq=0;
-            //ESP_LOGI("tflite", "Interpreter initialization status: %d", interpreter->initialization_status());
+            seq_original=0;
             TfLiteStatus invoke_status = interpreter->Invoke();
             if (invoke_status != kTfLiteOk) {
                 MicroPrintf("Invoke failed");
@@ -69,30 +78,33 @@ void detection_task(void *pvParameter){
                 for(int i=0;i<128;++i){
                     //get output(and dequantized)
                     //output[i] = (tflite::GetTensorData<int8_t>(model_output)[i] - output_zero_point) * output_scale;
-                    output[i] = tflite::GetTensorData<float_t>(model_output)[i];
+                    output[i] = tflite::GetTensorData<float_t>(model_output)[i]; //output is scaled value
                     //calculate reconstructed_error
                     
                 }
-                for(int i=0;i<16;++i){
-                    minmax_scale_revert(output+i);
-                }
                 for(int i=0;i<128;++i){
-                    error[i] = fabs(input[i] - output[i]);
+                    error[i] = fabs(input_scaled[i] - output[i]);
                     if(error[i]>ANOMALY_THRESHOLD){
-                        //ESP_LOGI(TAG,"diff: %f",error[i]);
                         anomaly=true;
                         anomaly_index=i;
+                        break;
                     }
                 }
+                for(int i=0;i<128;i+=8){
+                    minmax_scale_revert(output+i);
+                }
+                //now, output is original value.
                 if(anomaly){
                     anomaly=false;
-                    message = (char*)pvPortMalloc(100*sizeof(char));
+                    message = (char*)pvPortMalloc(200*sizeof(char));
                     
-                    anomaly_index = anomaly_index/8;
+                    anomaly_index_share = anomaly_index/8;
+                    anomaly_index_remain = anomaly_index%8;
                     if(message!=NULL){
                         
-                        sprintf(message,"anomaly detected: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\n",
-                            input[anomaly_index+0],input[anomaly_index+1],input[anomaly_index+2],input[anomaly_index+3],input[anomaly_index+4],input[anomaly_index+5],input[anomaly_index+6],input[anomaly_index+7]);
+                        sprintf(message,"anomaly detected: %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d(%.5f): %.5f expected\n",
+                            input[anomaly_index_share*8+0],input[anomaly_index_share*8+1],input[anomaly_index_share*8+2],input[anomaly_index_share*8+3],input[anomaly_index_share*8+4],input[anomaly_index_share*8+5],input[anomaly_index_share*8+6],input[anomaly_index_share*8+7],
+                            anomaly_index_remain ,input[anomaly_index],output[anomaly_index]);
                         ESP_LOGI(TAGTF,"%s",message);
                         send_notification((uint8_t*)message,strlen(message));
                         vPortFree(message);
@@ -137,9 +149,6 @@ void measure_task(void *pvParameter){
             acce_value.acce_y -=bias_acce.acce_y;
             acce_value.acce_z -=bias_acce.acce_z;
 
-            gyro_value.gyro_x *= (M_PI/180.0);
-            gyro_value.gyro_y *= (M_PI/180.0);
-            gyro_value.gyro_z *= (M_PI/180.0);
 
             pitch = get_pitch(acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
             roll = get_roll(acce_value.acce_x,acce_value.acce_y,acce_value.acce_z);
