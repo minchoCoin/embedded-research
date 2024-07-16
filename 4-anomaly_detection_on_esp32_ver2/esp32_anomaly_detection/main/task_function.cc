@@ -87,16 +87,13 @@ void detection_int8_task(void *pvParameter){
                         break;
                     }
                 }
-                for(int i=0;i<128;i+=8){
-                    minmax_scale_revert(output+i);
-                }
-                //now, output is original value.
+                
                 if(anomaly){
                     anomaly=false;
-                    
-                    
                     anomaly_index_share = anomaly_index/8;
                     anomaly_index_remain = anomaly_index%8;
+                    minmax_scale_revert(output+(anomaly_index_share*8));
+                    
                     sprintf(message,"anomaly detected; %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d : %.5f: expected:%.5f\n",
                             input[anomaly_index_share*8+0],input[anomaly_index_share*8+1],input[anomaly_index_share*8+2],input[anomaly_index_share*8+3],input[anomaly_index_share*8+4],input[anomaly_index_share*8+5],input[anomaly_index_share*8+6],input[anomaly_index_share*8+7],
                             anomaly_index_remain ,input[anomaly_index],output[anomaly_index]);
@@ -170,16 +167,12 @@ void detection_task(void *pvParameter){
                         break;
                     }
                 }
-                for(int i=0;i<128;i+=8){
-                    minmax_scale_revert(output+i);
-                }
-                //now, output is original value.
+                
                 if(anomaly){
                     anomaly=false;
-                    
-                    
                     anomaly_index_share = anomaly_index/8;
                     anomaly_index_remain = anomaly_index%8;
+                    minmax_scale_revert(output+(anomaly_index_share*8));
                     sprintf(message,"anomaly detected; %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d : %.5f: expected:%.5f\n",
                             input[anomaly_index_share*8+0],input[anomaly_index_share*8+1],input[anomaly_index_share*8+2],input[anomaly_index_share*8+3],input[anomaly_index_share*8+4],input[anomaly_index_share*8+5],input[anomaly_index_share*8+6],input[anomaly_index_share*8+7],
                             anomaly_index_remain ,input[anomaly_index],output[anomaly_index]);
