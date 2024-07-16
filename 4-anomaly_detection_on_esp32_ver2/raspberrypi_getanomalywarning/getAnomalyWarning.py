@@ -25,7 +25,7 @@ async def main():
     client = BleakClient(DEVICE_ADDRESS)
     await client.connect()
     await client.start_notify(CHARACTERISTIC_UUID, notification_handler)
-    print('anomaly recevied starting...')
+    print('getting anomaly information start...')
     try:
         while client.is_connected:
             await asyncio.sleep(1)
