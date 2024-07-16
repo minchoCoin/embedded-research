@@ -90,8 +90,22 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG,"creating task start...");
     xTaskCreate(&measure_task, "measure_task",4096,NULL,6,NULL);
     ESP_LOGI(TAG,"measure task has been created");
-    xTaskCreate(&detection_task, "detect_task", 8192, NULL, 4, NULL);
-    ESP_LOGI("tflite","detection task has been created");
+
+    if(interpreter->input(0)->type == kTfLiteInt8){
+      xTaskCreate(&detection_int8_task, "detect_int8_task", 8192, NULL, 4, NULL);
+      ESP_LOGI("tflite","detection int8 task has been created");
+    }
+    else if(interpreter->input(0)->type == kTfLiteFloat32){
+      xTaskCreate(&detection_task, "detect_task", 8192, NULL, 4, NULL);
+      ESP_LOGI("tflite","detection task has been created");
+    }
+    else{
+      ESP_LOGE(TAGTF,"unsupport type!");
+      return;
+    }
+
+    
+    
     //xTaskCreate(&bluetooth_task, "blue_task", 2048, NULL, 3, NULL); //due to the memory, delete bluetooth task and concatenate with detection task.
     
     print_heap_size_info();
@@ -118,7 +132,6 @@ int setup_model(){
   //tensor_arena = (uint8_t *) heap_caps_malloc(kTensorArenaSize, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
   
   TfLiteTensor* model_input= nullptr;
-TfLiteTensor* model_output= nullptr;
     model = tflite::GetModel(model_tflite);
  //model init start
     if (model->version() != TFLITE_SCHEMA_VERSION) {
@@ -151,6 +164,8 @@ TfLiteTensor* model_output= nullptr;
   model_input = interpreter->input(0);
 
   ESP_LOGI(TAGTF,"model info: %d %d %d",model_input->dims->size, model_input->dims->data[0],model_input->dims->data[1]);
+
+
   if (model_input->data.f == nullptr) {
     MicroPrintf("input->data.f == nullptr");
     return 0;

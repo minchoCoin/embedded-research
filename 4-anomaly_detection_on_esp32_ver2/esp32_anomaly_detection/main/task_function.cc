@@ -25,15 +25,12 @@ extern QueueHandle_t queue_data;
 static const char *TAG = "icm20948";
 static const char *TAGTF="tflite";
 
-
-void detection_task(void *pvParameter){
-
+void detection_int8_task(void *pvParameter){
     extern tflite::MicroInterpreter* interpreter;
     TfLiteTensor*model_input= interpreter->input(0);
     TfLiteTensor*model_output= interpreter->output(0);
-    float_t* model_input_buffer = tflite::GetTensorData<float_t>(model_input);
+    int8_t* model_input_buffer = tflite::GetTensorData<int8_t>(model_input);
     float* data;
-    char* message;
     int anomaly_index=0;
     int anomaly_index_share=0;
     int anomaly_index_remain=0;
@@ -48,6 +45,7 @@ void detection_task(void *pvParameter){
     float input_scaled[128];
     float output[128]; //scaled ->original
     float error[128];
+    char message[200];
     //SEQ_LEN=16 -->sequences_shape = (,128)
     int seq=0;
     int seq_original=0;
@@ -61,8 +59,8 @@ void detection_task(void *pvParameter){
 
             minmax_scale(data);
             for(int i=0;i<8;++i){
-                //model_input_buffer[seq++] = (int8_t)(data[i] / input_scale + input_zero_point);
-                model_input_buffer[seq] = data[i]; //model input buffer store scaled gyro/acce value
+                model_input_buffer[seq] = (int8_t)(data[i] / input_scale + input_zero_point);
+                //model_input_buffer[seq] = data[i]; //model input buffer store scaled gyro/acce value
                 input_scaled[seq] = data[i];
                 seq++;
             }
@@ -76,7 +74,90 @@ void detection_task(void *pvParameter){
             else{
                 for(int i=0;i<128;++i){
                     //get output(and dequantized)
-                    //output[i] = (tflite::GetTensorData<int8_t>(model_output)[i] - output_zero_point) * output_scale;
+                    output[i] = (tflite::GetTensorData<int8_t>(model_output)[i] - output_zero_point) * output_scale;
+                    //output[i] = tflite::GetTensorData<float_t>(model_output)[i]; //output is scaled value
+                    //calculate reconstructed_error
+                    
+                }
+                for(int i=0;i<128;++i){
+                    error[i] = fabs(input_scaled[i] - output[i]);
+                    if(error[i]>ANOMALY_THRESHOLD){
+                        anomaly=true;
+                        anomaly_index=i;
+                        break;
+                    }
+                }
+                for(int i=0;i<128;i+=8){
+                    minmax_scale_revert(output+i);
+                }
+                //now, output is original value.
+                if(anomaly){
+                    anomaly=false;
+                    
+                    
+                    anomaly_index_share = anomaly_index/8;
+                    anomaly_index_remain = anomaly_index%8;
+                    sprintf(message,"anomaly detected; %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d : %.5f: expected:%.5f\n",
+                            input[anomaly_index_share*8+0],input[anomaly_index_share*8+1],input[anomaly_index_share*8+2],input[anomaly_index_share*8+3],input[anomaly_index_share*8+4],input[anomaly_index_share*8+5],input[anomaly_index_share*8+6],input[anomaly_index_share*8+7],
+                            anomaly_index_remain ,input[anomaly_index],output[anomaly_index]);
+                    ESP_LOGI(TAGTF,"%s",message);
+                    send_notification((uint8_t*)message,strlen(message));
+                    
+                }
+                
+            }
+           }
+            
+            vPortFree(data);
+            data=NULL;
+        }
+    }
+}
+
+void detection_task(void *pvParameter){
+
+    extern tflite::MicroInterpreter* interpreter;
+    TfLiteTensor*model_input= interpreter->input(0);
+    TfLiteTensor*model_output= interpreter->output(0);
+    float_t* model_input_buffer = tflite::GetTensorData<float_t>(model_input);
+    float* data;
+    int anomaly_index=0;
+    int anomaly_index_share=0;
+    int anomaly_index_remain=0;
+    //ESP_LOGI("detection task","detection task created");
+
+    
+    float input[128]; //original_value
+    float input_scaled[128];
+    float output[128]; //scaled ->original
+    float error[128];
+    char message[200];
+    //SEQ_LEN=16 -->sequences_shape = (,128)
+    int seq=0;
+    int seq_original=0;
+    while(1){
+        if(xQueueReceive(queue_data,&data,portMAX_DELAY)==pdPASS){
+            bool anomaly=false;
+
+            for(int i=0;i<8;++i){
+                input[seq_original++] = data[i];//input array store original gyro/acce value
+            }
+
+            minmax_scale(data);
+            for(int i=0;i<8;++i){
+                model_input_buffer[seq] = data[i]; //model input buffer store scaled gyro/acce value
+                input_scaled[seq] = data[i];
+                seq++;
+            }
+           if(seq==128){
+            seq=0;
+            seq_original=0;
+            TfLiteStatus invoke_status = interpreter->Invoke();
+            if (invoke_status != kTfLiteOk) {
+                MicroPrintf("Invoke failed");
+            }
+            else{
+                for(int i=0;i<128;++i){
                     output[i] = tflite::GetTensorData<float_t>(model_output)[i]; //output is scaled value
                     //calculate reconstructed_error
                     
@@ -95,20 +176,16 @@ void detection_task(void *pvParameter){
                 //now, output is original value.
                 if(anomaly){
                     anomaly=false;
-                    message = (char*)pvPortMalloc(200*sizeof(char));
+                    
                     
                     anomaly_index_share = anomaly_index/8;
                     anomaly_index_remain = anomaly_index%8;
-                    if(message!=NULL){
-                        
-                        sprintf(message,"anomaly detected; %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d : %.5f: expected:%.5f\n",
+                    sprintf(message,"anomaly detected; %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f, %.5f\nanomaly_index: %d : %.5f: expected:%.5f\n",
                             input[anomaly_index_share*8+0],input[anomaly_index_share*8+1],input[anomaly_index_share*8+2],input[anomaly_index_share*8+3],input[anomaly_index_share*8+4],input[anomaly_index_share*8+5],input[anomaly_index_share*8+6],input[anomaly_index_share*8+7],
                             anomaly_index_remain ,input[anomaly_index],output[anomaly_index]);
-                        ESP_LOGI(TAGTF,"%s",message);
-                        send_notification((uint8_t*)message,strlen(message));
-                        vPortFree(message);
-                    }
-            
+                    ESP_LOGI(TAGTF,"%s",message);
+                    send_notification((uint8_t*)message,strlen(message));
+                    
                 }
                 
             }

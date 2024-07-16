@@ -70,7 +70,7 @@ for data in received_data:
     anomaly_value = float(anomaly_info.split(':')[2].strip())
     expected_value = float(anomaly_info.split(':')[4].strip())
      
-    df.loc[len(df)] = [time,gx,gy,gz,ax,ay,az,pitch,roll,anomaly_index,anomaly_value]
+    df.loc[len(df)] = [time,gx,gy,gz,ax,ay,az,pitch,roll,anomaly_index,anomaly_value,expected_value]
 
 print(df.head())
 df.to_csv('anomaly_detection_data.csv',index=False)
