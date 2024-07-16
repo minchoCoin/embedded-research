@@ -69,3 +69,6 @@ model_.png is generated with [Netron](https://github.com/lutzroeder/netron)
 
 # references
 - [esp32 tflite example](https://github.com/espressif/esp-tflite-micro/blob/master/examples/micro_speech/main/main_functions.cc)
+- [esp32 bluetooth example](https://github.com/espressif/esp-idf/tree/master/examples/bluetooth/bluedroid/ble/ble_spp_server)
+- [esp32 icm20948 library](https://github.com/listout/icm20948_driver)
+- [https://underflow101.tistory.com/42](https://underflow101.tistory.com/42)
