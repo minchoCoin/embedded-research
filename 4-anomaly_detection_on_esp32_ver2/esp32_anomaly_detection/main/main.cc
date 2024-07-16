@@ -51,7 +51,7 @@ icm20948_acce_value_t bias_acce;
 const tflite::Model* model = nullptr;
 tflite::MicroInterpreter* interpreter = nullptr;
 
-constexpr int kTensorArenaSize = 15 * 1024;
+constexpr int kTensorArenaSize = 20 * 1024;
 uint8_t tensor_arena[kTensorArenaSize];
 tflite::MicroMutableOpResolver<12> micro_op_resolver;
 
