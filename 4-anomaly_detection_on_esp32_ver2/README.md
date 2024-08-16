@@ -9,6 +9,9 @@ training model using [anomaly_dection_model_colab.ipynb](https://github.com/minc
 # install tflite on esp32
 refer [esp32 tflite github readme](https://github.com/espressif/esp-tflite-micro/blob/master/README.md)
 
+# video
+[![Video Label](http://img.youtube.com/vi/oD-Kjb7j69U/0.jpg)](https://youtu.be/oD-Kjb7j69U)
+
 # anomaly detection
 anomaly detection using [this_code](https://github.com/minchoCoin/embedded-research/tree/main/4-anomaly_detection_on_esp32_ver2/esp32_anomaly_detection)
 
