@@ -21,20 +21,18 @@ refer [esp32 tflite github readme](https://github.com/espressif/esp-tflite-micro
 I (14665) tflite: anomaly detected; (Gyro x value), (Gyro y value), (Gyro z value), (Accel x value), (Accel y value), (Accel z value), (pitch), (roll value)
 anomaly_index: (index of anomaly value) : (anomaly value): expected:(expected value of anomaly index)
 ```
----
-**NOTE**
+> **_NOTE:_**
+> index of anomaly value:
+> - 0: Gyro x
+> - 1: Gyro y
+> - 2: Gyro z
+> - 3: Accel x
+> - 4: Accel y
+> - 5: Accel z
+> - 6: pitch
+> - 7: roll
 
-index of anomaly value:
-- 0: Gyro x
-- 1: Gyro y
-- 2: Gyro z
-- 3: Accel x
-- 4: Accel y
-- 5: Accel z
-- 6: pitch
-- 7: roll
 
----
 example:
 ```
 I (14665) tflite: anomaly detected; 14.02489, 155.73207, -90.38718, 1.15053, -0.28279, 0.04502, -0.24083, 1.32687
