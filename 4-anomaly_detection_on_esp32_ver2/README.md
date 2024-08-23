@@ -15,7 +15,7 @@ refer [esp32 tflite github readme](https://github.com/espressif/esp-tflite-micro
 [![Video Label](http://img.youtube.com/vi/o0k4yUBxlqs/0.jpg)](https://youtu.be/o0k4yUBxlqs)
 
 # output example
-'''
+```
 ets Jun  8 2016 00:22:57
 
 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
@@ -137,9 +137,7 @@ anomaly_index: 2 : 38.42199: expected:11.33164
 
 I (48265) tflite: anomaly detected; -12.83008, -40.45115, 40.39145, 0.31411, -0.46931, -0.41396, -0.73455, 0.46519
 anomaly_index: 1 : -40.45115: expected:4.40011
-
-
-'''
+```
 
 # anomaly detection
 anomaly detection using [this_code](https://github.com/minchoCoin/embedded-research/tree/main/4-anomaly_detection_on_esp32_ver2/esp32_anomaly_detection)
