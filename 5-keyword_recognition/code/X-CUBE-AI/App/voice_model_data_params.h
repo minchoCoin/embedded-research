@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voice_model_data_params.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Fri Aug  9 16:08:00 2024
+  * @date    Wed Aug 28 18:48:18 2024
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2024 STMicroelectronics.
@@ -29,10 +29,10 @@
 
 
 #define AI_VOICE_MODEL_DATA_ACTIVATIONS_SIZES \
-  { 60416, }
-#define AI_VOICE_MODEL_DATA_ACTIVATIONS_SIZE     (60416)
+  { 66016, }
+#define AI_VOICE_MODEL_DATA_ACTIVATIONS_SIZE     (66016)
 #define AI_VOICE_MODEL_DATA_ACTIVATIONS_COUNT    (1)
-#define AI_VOICE_MODEL_DATA_ACTIVATION_1_SIZE    (60416)
+#define AI_VOICE_MODEL_DATA_ACTIVATION_1_SIZE    (66016)
 
 
 

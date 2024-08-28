@@ -3,7 +3,7 @@
   ******************************************************************************
   * @file    voice_model_config.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Fri Aug  9 16:08:00 2024
+  * @date    Wed Aug 28 18:48:18 2024
   * @brief   AI Tool Automatic Code Generator for Custom Layers Implementation
   ******************************************************************************
   * @attention

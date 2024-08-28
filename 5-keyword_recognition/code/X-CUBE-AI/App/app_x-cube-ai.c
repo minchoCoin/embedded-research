@@ -155,8 +155,6 @@ static int ai_boostrap(ai_handle *act_addr)
   return 0;
 }
 
-
-
 static int ai_run(void)
 {
   ai_i32 batch;
@@ -175,13 +173,15 @@ static int ai_run(void)
 extern UART_HandleTypeDef huart3;
 extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim2;
-ai_double input_scale = 0.10635975003242493;
+char* target_voices[8] = {"up","down","left","right","go","stop","yes","no"};
+
+ai_double input_scale = 0.1303439885377884;
 ai_i32 input_zero_point = -128;
 
 ai_double output_scale = 0.00390625;
 ai_i32 output_zero_point = -128;
 
-char* target_voices[8] = {"up","down","left","right","go","stop","yes","no"};
+
 
 ai_i8 input_quantization(float value){
 	return (ai_i8)(value/input_scale + input_zero_point);
@@ -205,7 +205,7 @@ extern uint16_t* voice_buffer;
 extern void MX_TIM2_Init(void);
 #define FFT_SIZE 256
 #define HOP_LENGTH 128
-#define NUM_FRAMES 110
+#define NUM_FRAMES 120
 arm_cfft_instance_f32 fft_instance;
 float fft_input[FFT_SIZE*2];
 float fft_output[FFT_SIZE];
@@ -277,12 +277,18 @@ int post_process(ai_i8* data[])
    //process the predictions3
 
   ai_double out_deq[AI_VOICE_MODEL_OUT_1_SIZE];
+  int prob[AI_VOICE_MODEL_OUT_1_SIZE];
   for (int idx=0; idx < AI_VOICE_MODEL_OUT_1_SIZE; idx++ )
   {
       out_deq[idx] = output_dequantization(data[0][idx]);
+      prob[idx] = (int)(out_deq[idx]*100);
   }
   uint16_t index = f_argmax(out_deq,AI_VOICE_MODEL_OUT_1_SIZE);
 
+  //char* target_voices[8] = {"up","down","left","right","go","stop","yes","no"};
+
+  buf_len_ai = sprintf(buf_ai,"output: [%d, %d, %d, %d, %d, %d, %d, %d]\r\n",prob[0],prob[1],prob[2],prob[3],prob[4],prob[5],prob[6],prob[7]);
+  HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);
 
   buf_len_ai = sprintf(buf_ai,"voice keyword: %s\r\n\r\n",target_voices[index]);
   HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);

@@ -61,7 +61,7 @@ static void MX_GPIO_Init(void);
 static void MX_CRC_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_ADC3_Init(void);
- void MX_TIM2_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -167,9 +167,6 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-
-  voice_buffer = (uint16_t*)malloc(VOICE_BUFFER_LEN * sizeof(uint16_t));
-
   MX_GPIO_Init();
   MX_CRC_Init();
   MX_USART3_UART_Init();
@@ -329,7 +326,7 @@ static void MX_CRC_Init(void)
   * @param None
   * @retval None
   */
- void MX_TIM2_Init(void)
+static void MX_TIM2_Init(void)
 {
 
   /* USER CODE BEGIN TIM2_Init 0 */

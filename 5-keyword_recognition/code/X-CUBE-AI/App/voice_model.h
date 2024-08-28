@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voice_model.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Fri Aug  9 16:08:00 2024
+  * @date    Wed Aug 28 18:48:18 2024
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -46,10 +46,10 @@ AI_DEPRECATED
   AI_VOICE_MODEL_IN_1_SIZE_BYTES, \
 }
 #define AI_VOICE_MODEL_IN_1_FORMAT      AI_BUFFER_FORMAT_S8
-#define AI_VOICE_MODEL_IN_1_HEIGHT      (128)
-#define AI_VOICE_MODEL_IN_1_CHANNEL     (110)
-#define AI_VOICE_MODEL_IN_1_SIZE        (128 * 110)
-#define AI_VOICE_MODEL_IN_1_SIZE_BYTES  (14080)
+#define AI_VOICE_MODEL_IN_1_HEIGHT      (129)
+#define AI_VOICE_MODEL_IN_1_CHANNEL     (120)
+#define AI_VOICE_MODEL_IN_1_SIZE        (129 * 120)
+#define AI_VOICE_MODEL_IN_1_SIZE_BYTES  (15480)
 
 /******************************************************************************/
 #define AI_VOICE_MODEL_OUT_NUM       (1)
