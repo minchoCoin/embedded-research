@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voice_model_data_params.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Wed Aug 28 18:48:18 2024
+  * @date    Thu Aug 29 15:08:04 2024
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2024 STMicroelectronics.
@@ -16,7 +16,6 @@
 
 #ifndef VOICE_MODEL_DATA_PARAMS_H
 #define VOICE_MODEL_DATA_PARAMS_H
-#pragma once
 
 #include "ai_platform.h"
 
@@ -37,10 +36,10 @@
 
 
 #define AI_VOICE_MODEL_DATA_WEIGHTS_SIZES \
-  { 296616, }
-#define AI_VOICE_MODEL_DATA_WEIGHTS_SIZE         (296616)
+  { 1184424, }
+#define AI_VOICE_MODEL_DATA_WEIGHTS_SIZE         (1184424)
 #define AI_VOICE_MODEL_DATA_WEIGHTS_COUNT        (1)
-#define AI_VOICE_MODEL_DATA_WEIGHT_1_SIZE        (296616)
+#define AI_VOICE_MODEL_DATA_WEIGHT_1_SIZE        (1184424)
 
 
 

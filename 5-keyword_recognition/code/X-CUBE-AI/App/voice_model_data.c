@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voice_model_data.c
   * @author  AST Embedded Analytics Research Platform
-  * @date    Wed Aug 28 18:48:18 2024
+  * @date    Thu Aug 29 15:08:04 2024
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -26,8 +26,8 @@ ai_buffer g_voice_model_data_map_activations[AI_VOICE_MODEL_DATA_ACTIVATIONS_COU
   };
 ai_buffer g_voice_model_data_map_weights[AI_VOICE_MODEL_DATA_WEIGHTS_COUNT] = {
   AI_BUFFER_INIT(AI_FLAG_NONE,  AI_BUFFER_FORMAT_U8,
-    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 296616, 1, 1),
-    296616, NULL, s_voice_model_weights_array_u64),   /* weights_array */
+    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 1184424, 1, 1),
+    1184424, NULL, s_voice_model_weights_array_u64),   /* weights_array */
   };
 
 

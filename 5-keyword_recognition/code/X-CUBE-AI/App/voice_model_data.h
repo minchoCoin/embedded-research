@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voice_model_data.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Wed Aug 28 18:48:18 2024
+  * @date    Thu Aug 29 15:08:04 2024
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2024 STMicroelectronics.
@@ -16,7 +16,6 @@
 
 #ifndef VOICE_MODEL_DATA_H
 #define VOICE_MODEL_DATA_H
-#pragma once
 
 #include "voice_model_config.h"
 #include "voice_model_data_params.h"
@@ -33,7 +32,7 @@ AI_DEPRECATED
 AI_API_DECLARE_BEGIN
 
 
-extern const ai_u64 s_voice_model_weights_array_u64[37077];
+extern const ai_u64 s_voice_model_weights_array_u64[148053];
 
 
 

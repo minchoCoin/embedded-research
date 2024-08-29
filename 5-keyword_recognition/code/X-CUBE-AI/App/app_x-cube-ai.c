@@ -174,15 +174,12 @@ extern UART_HandleTypeDef huart3;
 extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim2;
 char* target_voices[8] = {"up","down","left","right","go","stop","yes","no"};
-
+/*
 ai_double input_scale = 0.1303439885377884;
 ai_i32 input_zero_point = -128;
 
 ai_double output_scale = 0.00390625;
 ai_i32 output_zero_point = -128;
-
-
-
 ai_i8 input_quantization(float value){
 	return (ai_i8)(value/input_scale + input_zero_point);
 }
@@ -190,7 +187,7 @@ ai_i8 input_quantization(float value){
 ai_double output_dequantization(ai_i8 value){
 	return (((ai_double)value -output_zero_point) * output_scale);
 }
-
+*/
 uint16_t f_argmax(ai_double* data, uint32_t len){
 	uint16_t max_pos = 0;
 	for(int i = 0; i < len; i++){
@@ -243,59 +240,64 @@ void perform_stft(uint16_t *audio_buffer, uint32_t audio_length) {
     //buf_len_ai = sprintf(buf_ai,"stft end...\r\n");
       //HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);
 }
-
 int acquire_and_process_data(ai_i8* data[])
 {
-   //fill the inputs of the c-model
-	//perform_stft(voice_buffer, 16000);
+  /* fill the inputs of the c-model
+  for (int idx=0; idx < AI_VOICE_MODEL_IN_NUM; idx++ )
+  {
+      data[idx] = ....
+  }
 
+  */
 	while(adc_get_voice_end!=1){
 
-	}
+		}
 
-	if(adc_get_voice_end == 1){
+		if(adc_get_voice_end == 1){
 
-		//start preprocessing
-		perform_stft(voice_buffer, 16000);
-		for (int idx=0; idx < AI_VOICE_MODEL_IN_1_SIZE; idx++ )
-		  {
+			//start preprocessing
+			perform_stft(voice_buffer, 16000);
+			for (int idx=0; idx < AI_VOICE_MODEL_IN_1_SIZE; idx++ )
+			  {
 
-		      data[0][idx] = input_quantization(stft_result[(int)(idx/NUM_FRAMES)][idx%NUM_FRAMES]);
+			      ((float*)(data[0]))[idx] = stft_result[(int)(idx/NUM_FRAMES)][idx%NUM_FRAMES];
 
-		  }
+			  }
 
-	}
-
-
-
-
+		}
   return 0;
 }
 
 int post_process(ai_i8* data[])
 {
-   //process the predictions3
-
-  ai_double out_deq[AI_VOICE_MODEL_OUT_1_SIZE];
-  int prob[AI_VOICE_MODEL_OUT_1_SIZE];
-  for (int idx=0; idx < AI_VOICE_MODEL_OUT_1_SIZE; idx++ )
+  /* process the predictions
+  for (int idx=0; idx < AI_VOICE_MODEL_OUT_NUM; idx++ )
   {
-      out_deq[idx] = output_dequantization(data[0][idx]);
-      prob[idx] = (int)(out_deq[idx]*100);
+      data[idx] = ....
   }
-  uint16_t index = f_argmax(out_deq,AI_VOICE_MODEL_OUT_1_SIZE);
 
-  //char* target_voices[8] = {"up","down","left","right","go","stop","yes","no"};
+  */
+	ai_double out_deq[AI_VOICE_MODEL_OUT_1_SIZE];
+	  int prob[AI_VOICE_MODEL_OUT_1_SIZE];
+	  for (int idx=0; idx < AI_VOICE_MODEL_OUT_1_SIZE; idx++ )
+	  {
+	      out_deq[idx] = ((float*)data[0])[idx];
+	      prob[idx] = (int)(out_deq[idx]*100);
+	  }
+	  uint16_t index = f_argmax(out_deq,AI_VOICE_MODEL_OUT_1_SIZE);
 
-  buf_len_ai = sprintf(buf_ai,"output: [%d, %d, %d, %d, %d, %d, %d, %d]\r\n",prob[0],prob[1],prob[2],prob[3],prob[4],prob[5],prob[6],prob[7]);
-  HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);
+	  //char* target_voices[8] = {"up","down","left","right","go","stop","yes","no"};
 
-  buf_len_ai = sprintf(buf_ai,"voice keyword: %s\r\n\r\n",target_voices[index]);
-  HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);
-  adc_get_voice_end=0;
-  //HAL_ADC_Start_IT(&hadc3);
+	  buf_len_ai = sprintf(buf_ai,"output: [%d, %d, %d, %d, %d, %d, %d, %d]\r\n",prob[0],prob[1],prob[2],prob[3],prob[4],prob[5],prob[6],prob[7]);
+	  HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);
 
-  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	  buf_len_ai = sprintf(buf_ai,"voice keyword: %s\r\n\r\n",target_voices[index]);
+	  HAL_UART_Transmit(&huart3, (uint8_t *)buf_ai, buf_len_ai, 100);
+	  adc_get_voice_end=0;
+	  //HAL_ADC_Start_IT(&hadc3);
+
+	  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	  return 0;
   return 0;
 }
 /* USER CODE END 2 */
@@ -329,7 +331,6 @@ void MX_X_CUBE_AI_Process(void)
       /* 3- post-process the predictions */
       if (res == 0)
         res = post_process(data_outs);
-      HAL_Delay(1000);
     } while (res==0);
   }
 

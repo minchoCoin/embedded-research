@@ -16,8 +16,8 @@ this code is still constructing...
     - model training: tensorflow
 - stm32
     - IDE: STM32CubeIDE (with STM32F4xx_HAL_Driver)
-    - stm32 AI Library: STM32 X.Cube-AI
-    - stm32 FFT Library: CMSIS-DSP Library
+    - stm32 AI Library: STM32 X.Cube-AI(8.1.0)
+    - stm32 FFT Library: CMSIS-DSP Library(1.4.0)
 # references
 - https://www.tensorflow.org/tutorials/audio/simple_audio?hl=ko
 - https://blog.naver.com/PostView.naver?blogId=mapes_khkim&logNo=221878153123
@@ -41,4 +41,5 @@ this code is still constructing...
 - https://www.st.com/resource/en/application_note/an4841-digital-signal-processing-for-stm32-microcontrollers-using-cmsis-stmicroelectronics.pdf
 - https://wiki.st.com/stm32mcu/wiki/Getting_started_with_ADC
 - https://usermanual.wiki/Document/STM32ARMMANUALtrang1875.1008118776.pdf
+- https://m.blog.naver.com/PostView.naver?blogId=kim1417&logNo=221993809231
 

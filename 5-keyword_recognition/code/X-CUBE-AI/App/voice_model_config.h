@@ -3,7 +3,7 @@
   ******************************************************************************
   * @file    voice_model_config.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Wed Aug 28 18:48:18 2024
+  * @date    Thu Aug 29 15:08:04 2024
   * @brief   AI Tool Automatic Code Generator for Custom Layers Implementation
   ******************************************************************************
   * @attention
@@ -19,15 +19,14 @@
 
 #ifndef AI_VOICE_MODEL_CONFIG_H
 #define AI_VOICE_MODEL_CONFIG_H
-#pragma once
 
 #undef AI_TOOLS_VERSION_MAJOR
 #undef AI_TOOLS_VERSION_MINOR
 #undef AI_TOOLS_VERSION_MICRO
-#define AI_TOOLS_VERSION_MAJOR 8
-#define AI_TOOLS_VERSION_MINOR 1
+#define AI_TOOLS_VERSION_MAJOR 9
+#define AI_TOOLS_VERSION_MINOR 0
 #define AI_TOOLS_VERSION_MICRO 0
-#define AI_TOOLS_VERSION_EXTRA "19520"
+#define AI_TOOLS_VERSION_EXTRA "19802"
 
 
 #undef AI_PLATFORM_API_MAJOR
