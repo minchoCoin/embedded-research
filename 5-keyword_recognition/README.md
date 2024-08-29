@@ -16,7 +16,7 @@ this code is still constructing...
     - model training: tensorflow
 - stm32
     - IDE: STM32CubeIDE (with STM32F4xx_HAL_Driver)
-    - stm32 AI Library: STM32 X.Cube-AI(8.1.0)
+    - stm32 AI Library: STM32 X.Cube-AI(9.0.0)
     - stm32 FFT Library: CMSIS-DSP Library(1.4.0)
 # references
 - https://www.tensorflow.org/tutorials/audio/simple_audio?hl=ko
