@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voice_model.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Thu Aug 29 15:08:04 2024
+  * @date    Thu Aug 29 13:39:22 2024
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -15,8 +15,10 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   ******************************************************************************
   */
+
 #ifndef AI_VOICE_MODEL_H
 #define AI_VOICE_MODEL_H
+#pragma once
 
 #include "voice_model_config.h"
 #include "ai_platform.h"
@@ -43,11 +45,11 @@ AI_DEPRECATED
 #define AI_VOICE_MODEL_IN_SIZE_BYTES { \
   AI_VOICE_MODEL_IN_1_SIZE_BYTES, \
 }
-#define AI_VOICE_MODEL_IN_1_FORMAT      (AI_BUFFER_FORMAT_FLOAT)
+#define AI_VOICE_MODEL_IN_1_FORMAT      AI_BUFFER_FORMAT_S8
 #define AI_VOICE_MODEL_IN_1_HEIGHT      (129)
 #define AI_VOICE_MODEL_IN_1_CHANNEL     (120)
-#define AI_VOICE_MODEL_IN_1_SIZE        (15480)
-#define AI_VOICE_MODEL_IN_1_SIZE_BYTES  (61920)
+#define AI_VOICE_MODEL_IN_1_SIZE        (129 * 120)
+#define AI_VOICE_MODEL_IN_1_SIZE_BYTES  (15480)
 
 /******************************************************************************/
 #define AI_VOICE_MODEL_OUT_NUM       (1)
@@ -62,13 +64,13 @@ AI_DEPRECATED
 #define AI_VOICE_MODEL_OUT_SIZE_BYTES { \
   AI_VOICE_MODEL_OUT_1_SIZE_BYTES, \
 }
-#define AI_VOICE_MODEL_OUT_1_FORMAT      (AI_BUFFER_FORMAT_FLOAT)
+#define AI_VOICE_MODEL_OUT_1_FORMAT      AI_BUFFER_FORMAT_S8
 #define AI_VOICE_MODEL_OUT_1_CHANNEL     (8)
 #define AI_VOICE_MODEL_OUT_1_SIZE        (8)
-#define AI_VOICE_MODEL_OUT_1_SIZE_BYTES  (32)
+#define AI_VOICE_MODEL_OUT_1_SIZE_BYTES  (8)
 
 /******************************************************************************/
-#define AI_VOICE_MODEL_N_NODES (9)
+#define AI_VOICE_MODEL_N_NODES (11)
 
 
 AI_API_DECLARE_BEGIN
@@ -105,7 +107,6 @@ ai_bool ai_voice_model_get_info(
   ai_handle network, ai_network_report* report);
 
 
-
 /*!
  * @brief Get network library report as a datastruct.
  * @ingroup voice_model
@@ -117,7 +118,6 @@ ai_bool ai_voice_model_get_info(
 AI_API_ENTRY
 ai_bool ai_voice_model_get_report(
   ai_handle network, ai_network_report* report);
-
 
 /*!
  * @brief Get first network error code.
@@ -133,7 +133,6 @@ ai_bool ai_voice_model_get_report(
 AI_API_ENTRY
 ai_error ai_voice_model_get_error(ai_handle network);
 
-
 /*!
  * @brief Create a neural network.
  * @ingroup voice_model
@@ -147,7 +146,6 @@ AI_API_ENTRY
 ai_error ai_voice_model_create(
   ai_handle* network, const ai_buffer* network_config);
 
-
 /*!
  * @brief Destroy a neural network and frees the allocated memory.
  * @ingroup voice_model
@@ -159,7 +157,6 @@ ai_error ai_voice_model_create(
  */
 AI_API_ENTRY
 ai_handle ai_voice_model_destroy(ai_handle network);
-
 
 /*!
  * @brief Initialize the data structures of the network.
@@ -179,7 +176,6 @@ AI_API_ENTRY
 ai_bool ai_voice_model_init(
   ai_handle network, const ai_network_params* params);
 
-
 /*!
  * @brief Create and initialize a neural network (helper function)
  * @ingroup voice_model
@@ -193,7 +189,6 @@ AI_API_ENTRY
 ai_error ai_voice_model_create_and_init(
   ai_handle* network, const ai_handle activations[], const ai_handle weights[]);
 
-
 /*!
  * @brief Get network inputs array pointer as a ai_buffer array pointer.
  * @ingroup voice_model
@@ -205,7 +200,6 @@ AI_API_ENTRY
 ai_buffer* ai_voice_model_inputs_get(
   ai_handle network, ai_u16 *n_buffer);
 
-
 /*!
  * @brief Get network outputs array pointer as a ai_buffer array pointer.
  * @ingroup voice_model
@@ -216,7 +210,6 @@ ai_buffer* ai_voice_model_inputs_get(
 AI_API_ENTRY
 ai_buffer* ai_voice_model_outputs_get(
   ai_handle network, ai_u16 *n_buffer);
-
 
 /*!
  * @brief Run the network and return the output
@@ -237,7 +230,6 @@ ai_buffer* ai_voice_model_outputs_get(
 AI_API_ENTRY
 ai_i32 ai_voice_model_run(
   ai_handle network, const ai_buffer* input, ai_buffer* output);
-
 
 /*!
  * @brief Runs the network on the inputs.
